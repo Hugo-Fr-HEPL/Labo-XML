@@ -65,7 +65,6 @@ public class HandlerSAX extends DefaultHandler{
                     }
 
                     classement.set(j,film);
-                    System.out.println(classement);
                 }
 
 
