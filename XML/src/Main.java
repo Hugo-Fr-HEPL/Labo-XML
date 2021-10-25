@@ -19,6 +19,7 @@ public class Main {
         }
 
         WriteFichier("<!DOCTYPE films SYSTEM \"films.dtd\">\n",2);
+        WriteFichier("<?xml-stylesheet href =\"./films.xslt\" type=\"text/xsl\" ?>\n",2);
         WriteFichier("<films>\n",2);
 
         WriteFichier("<!ELEMENT films (film*)>\n",1);
@@ -35,13 +36,16 @@ public class Main {
         WriteFichier("<!ELEMENT posterPath (#PCDATA)>\n",1);
         WriteFichier("<!ELEMENT budget (#PCDATA)>\n",1);
         WriteFichier("<!ELEMENT tagline (#PCDATA)>\n",1);
-        WriteFichier("<!ELEMENT genres ((idg,nameg)*)>\n",1);
+        WriteFichier("<!ELEMENT genres ((genre)*)>\n",1);
+            WriteFichier("<!ELEMENT genre ((idg,nameg)*)>\n",1);
             WriteFichier("<!ELEMENT idg (#PCDATA)>\n",1);
             WriteFichier("<!ELEMENT nameg (#PCDATA)>\n",1);
-        WriteFichier("<!ELEMENT directors ((idd,named)*)>\n",1);
+        WriteFichier("<!ELEMENT directors ((director)*)>\n",1);
+            WriteFichier("<!ELEMENT director ((idd,named)*)>\n",1);
             WriteFichier("<!ELEMENT idd (#PCDATA)>\n",1);
             WriteFichier("<!ELEMENT named (#PCDATA)>\n",1);
-        WriteFichier("<!ELEMENT actors ((ida,namea,charactera)*)>\n",1);
+        WriteFichier("<!ELEMENT actors ((actor)*)>\n",1);
+            WriteFichier("<!ELEMENT actor ((ida,namea,charactera)*)>\n",1);
             WriteFichier("<!ELEMENT ida (#PCDATA)>\n",1);
             WriteFichier("<!ELEMENT namea (#PCDATA)>\n",1);
             WriteFichier("<!ELEMENT charactera (#PCDATA)>\n",1);
@@ -111,6 +115,7 @@ public class Main {
                             String infog;
                             while(litr1.hasNext())
                             {
+                                WriteFichier("\t<genre>\n",2);
                                 infog = litr1.next().toString();
                                 infosg = new Vector<String>();
                                 if(infog.equals("")==false)
@@ -124,6 +129,7 @@ public class Main {
                                     WriteFichier("\t<idg></idg>\n",2);
                                     WriteFichier("\t<nameg></nameg>\n",2);
                                 }
+                                WriteFichier("\t</genre>\n",2);
                             }
                             WriteFichier("\t</genres>\n",2);
                         break;
@@ -137,6 +143,7 @@ public class Main {
                             String infod;
                             while(litr2.hasNext())
                             {
+                                WriteFichier("\t<director>\n",2);
                                 infod = litr2.next().toString();
                                 infosd = new Vector<String>();
                                 if(infod.equals("")==false)
@@ -150,6 +157,7 @@ public class Main {
                                     WriteFichier("\t<idd></idd>\n",2);
                                     WriteFichier("\t<named></named>\n",2);
                                 }
+                                WriteFichier("\t</director>\n",2);
                             }
                             WriteFichier("\t</directors>\n",2);
                         break;
@@ -163,6 +171,7 @@ public class Main {
                             String infoa;
                             while(litr3.hasNext())
                             {
+                                WriteFichier("\t<actor>\n",2);
                                 infoa = litr3.next().toString();
                                 infosa = new Vector<String>();
                                 if(infoa.equals("")==false)
@@ -178,6 +187,7 @@ public class Main {
                                     WriteFichier("\t<namea></namea>\n",2);
                                     WriteFichier("\t<charactera></charactera>\n",2);
                                 }
+                                WriteFichier("\t</actor>\n",2);
                             }
                             WriteFichier("\t</actors>\n",2);
                         break;
