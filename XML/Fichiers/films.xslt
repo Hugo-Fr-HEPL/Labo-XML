@@ -28,7 +28,7 @@
 			<td><xsl:value-of select="id"/></td>
 			<td><xsl:value-of select="title"/></td>
 			<td><xsl:value-of select="originalTitle"/></td>
-			<td><xsl:value-of select="realeaseDate"/></td>
+			<td><xsl:value-of select="releaseDate"/></td>
 			<td><xsl:value-of select="status"/></td>
 			<td><xsl:value-of select="voteAverage"/></td>
 			<td><xsl:value-of select="voteCount"/></td>

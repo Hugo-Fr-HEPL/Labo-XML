@@ -4,18 +4,18 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
-public class SimplestSaxParser {
 
+
+public class SimplestSaxParser {
     public static void main(String[] args) {
         try {
-
             SAXParserFactory factory = SAXParserFactory.newInstance();
 
             factory.setValidating(true);
             factory.setNamespaceAware(true);
 
             SAXParser sp = factory.newSAXParser();
-            sp.parse("C:\\Users\\dries\\IdeaProjects\\XML\\Fichiers\\films.xml", new HandlerSAX());
+            sp.parse(GetNomFichier("films.xml"), new HandlerSAX());
 
         }
         catch (ParserConfigurationException pce) {
@@ -29,4 +29,7 @@ public class SimplestSaxParser {
         }
     }
 
+    public static String GetNomFichier(String nomf) {
+        return System.getProperty("user.dir") + System.getProperty("file.separator") + "XML" + System.getProperty("file.separator") + "Fichiers" + System.getProperty("file.separator") + nomf;
+    }
 }
