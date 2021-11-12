@@ -13,9 +13,9 @@ public class Main {
     public static void main(String[] args) {
         try {
             br = new BufferedReader(new FileReader(GetNomFichier("movies.txt")));
-            bf1 = new BufferedWriter(new FileWriter(GetNomFichier("films.dtd")));
-            bf2 = new BufferedWriter(new FileWriter(GetNomFichier("films.xml")));
-            bf3 = new BufferedWriter(new FileWriter(GetNomFichier("films.xsd")));
+            bf1 = new BufferedWriter(new FileWriter(GetNomFichier("movies.dtd")));
+            bf2 = new BufferedWriter(new FileWriter(GetNomFichier("movies.xml")));
+            bf3 = new BufferedWriter(new FileWriter(GetNomFichier("movies.xsd")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,9 +38,9 @@ public class Main {
 
         WriteDTD();
 
-        WriteXML(names);
+        WriteXML("movie", names);
 
-        WriteXSD("film", names);
+        WriteXSD("movie", names);
 
         try {
             bf1.close();
@@ -53,8 +53,8 @@ public class Main {
 
 
     public static void WriteDTD() {
-        WriteFichier("<!ELEMENT films (film*)>\n", 1);
-        WriteFichier("<!ELEMENT film (id,title,originalTitle,releaseDate,status,voteAverage,voteCount,runtime,certification,posterPath,budget,tagline,genres,directors,actors)>\n", 1);
+        WriteFichier("<!ELEMENT movies (movie*)>\n", 1);
+        WriteFichier("<!ELEMENT movie (id,title,originalTitle,releaseDate,status,voteAverage,voteCount,runtime,certification,posterPath,budget,tagline,genres,directors,actors)>\n", 1);
         WriteFichier("<!ELEMENT id (#PCDATA)>\n", 1);
         WriteFichier("<!ELEMENT title (#PCDATA)>\n", 1);
         WriteFichier("<!ELEMENT originalTitle (#PCDATA)>\n", 1);
@@ -83,25 +83,27 @@ public class Main {
     }
 
 
-    public static void WriteXML(String[][] names) {
-        WriteFichier("<!DOCTYPE films SYSTEM \"films.dtd\">\n", 2);
-        WriteFichier("<?xml-stylesheet href =\"./films.xslt\" type=\"text/xsl\" ?>\n", 2);
-        WriteFichier("<films>\n", 2);
+    public static void WriteXML(String global, String[][] names) {
+        WriteFichier("<!DOCTYPE movies SYSTEM \"movies.dtd\">\n", 2);
+        WriteFichier("<?xml-stylesheet href =\"./movies.xslt\" type=\"text/xsl\" ?>\n", 2);
+        WriteFichier("<"+ global +"s>\n", 2);
 
         ListIterator<String> lFilms = Divide("\n", readAll(br)).listIterator();
         while(lFilms.hasNext()) {
-            WriteFichier("<film>\n", 2);
             Vector<String> infos = Divide("‣", lFilms.next().toString());
 
-            for(int i = 0; i < infos.size(); i++) {
-                if(names[i].length <= 2)
-                    WriteXMLTag(names[i][0], infos.get(i), 1);
-                else
-                    WriteXMLTagPlus(names[i], infos.get(i));
+            if(lFilms.hasNext()) {
+                WriteFichier("<"+ global +">\n", 2);
+                for(int i = 0; i < infos.size(); i++) {
+                    if(names[i].length <= 2)
+                        WriteXMLTag(names[i][0], infos.get(i), 1);
+                    else
+                        WriteXMLTagPlus(names[i], infos.get(i));
+                }
+                WriteFichier("</"+ global +">\n", 2);
             }
-            WriteFichier("</film>\n", 2);
         }
-        WriteFichier("</films>", 2);
+        WriteFichier("</"+ global +"s>", 2);
     }
     public static void WriteXMLTag(String balise, String chaine, int i) {
         chaine = chaine.replaceAll("&", "&amp;");

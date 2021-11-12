@@ -113,10 +113,10 @@ public class HandlerSAX extends DefaultHandler {
         vote = false;
     }
 
+
     public void warning( SAXParseException e) throws SAXException {
         System.out.println(("WARNING : "+ e.getMessage ()));
     }
-
     public void error( SAXParseException e) throws SAXException {
         System.out.println(("ERROR : "+ e.getMessage ()));
     }
