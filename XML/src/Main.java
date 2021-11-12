@@ -13,142 +13,42 @@ public class Main {
             bf1 = new BufferedWriter(new FileWriter(GetNomFichier("films.dtd")));
             bf2 = new BufferedWriter(new FileWriter(GetNomFichier("films.xml")));
             br = new BufferedReader(new FileReader(GetNomFichier("movies.txt")));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         WriteDTD();
 
-        String films;
-        films= readAll(br);
+        ListIterator<String> lFilms = Divide("\n", readAll(br)).listIterator();
 
-        int i, j = 0;
-        String film;
-        Vector<String> vec = new Vector<String>();
-
-        while(true) {
-            i = films.indexOf("\n", j);
-            if(i == -1)
-                break;
-
-            film = films.substring(j, i);
-            j = i + 1;
-            vec.add(film);
-        }
-        ListIterator<String> litr = vec.listIterator();
         Vector<String> infos;
         String film1;
-        while(litr.hasNext()) {
+        while(lFilms.hasNext()) {
             WriteFichier("<film>\n", 2);
-            film1 = litr.next().toString();
+            film1 = lFilms.next().toString();
             infos = new Vector<String>();
             infos = Divide("‣", film1);
 
-            for(int champ = 0; champ < infos.size(); champ++) {
-                switch (champ) {
-                    case 0: WriteXML("id", infos.get(champ), 1);
-                        break;
-                    case 1: WriteXML("title", infos.get(champ), 1);
-                        break;
-                    case 2: WriteXML("originalTitle", infos.get(champ), 1);
-                        break;
-                    case 3: WriteXML("releaseDate", infos.get(champ), 1);
-                        break;
-                    case 4: WriteXML("status", infos.get(champ), 1);
-                        break;
-                    case 5: WriteXML("voteAverage", infos.get(champ), 1);
-                        break;
-                    case 6: WriteXML("voteCount", infos.get(champ), 1);
-                        break;
-                    case 7: WriteXML("runtime", infos.get(champ), 1);
-                        break;
-                    case 8: WriteXML("certification", infos.get(champ), 1);
-                        break;
-                    case 9: WriteXML("posterPath", infos.get(champ), 1);
-                        break;
-                    case 10: WriteXML("budget", infos.get(champ), 1);
-                        break;
-                    case 11: WriteXML("tagline", infos.get(champ), 1);
-                        break;
-                    case 12:
-                            WriteFichier("\t<genres>\n", 2);
-                            Vector<String> genres = new Vector<String>();
-                            genres = Divide("‖", infos.get(champ));
+            String[] names = {"id", "title", "originalTitle", "releaseDate", "status", "voteAverage", "voteCount", "runtime", "certification", "posterPath", "budget", "tagline"};
 
-                            ListIterator<String> litr1 = genres.listIterator();
-                            Vector<String> infosg;
-                            String infog;
-                            while(litr1.hasNext()) {
-                                WriteFichier("\t\t<genre>\n", 2);
-                                infog = litr1.next().toString();
-                                infosg = new Vector<String>();
-                                if(infog.equals("") == false) {
-                                    infosg = Divide("․", infog);
-                                    WriteXML("idg", infosg.get(0), 3);
-                                    WriteXML("nameg", infosg.get(1), 3);
-                                }
-                                else {
-                                    WriteFichier("\t\t\t<idg></idg>\n", 2);
-                                    WriteFichier("\t\t\t<nameg></nameg>\n", 2);
-                                }
-                                WriteFichier("\t\t</genre>\n", 2);
-                            }
-                            WriteFichier("\t</genres>\n", 2);
-                        break;
-                    case 13:
-                            WriteFichier("\t<directors>\n", 2);
-                            Vector<String> directors = new Vector<String>();
-                            directors = Divide("‖", infos.get(champ));
-
-                            ListIterator<String> litr2 = directors.listIterator();
-                            Vector<String> infosd;
-                            String infod;
-                            while(litr2.hasNext()) {
-                                WriteFichier("\t\t<director>\n", 2);
-                                infod = litr2.next().toString();
-                                infosd = new Vector<String>();
-                                if(infod.equals("") == false) {
-                                    infosd = Divide("․", infod);
-                                    WriteXML("idd", infosd.get(0), 3);
-                                    WriteXML("named", infosd.get(1), 3);
-                                }
-                                else {
-                                    WriteFichier("\t\t\t<idd></idd>\n", 2);
-                                    WriteFichier("\t\t\t<named></named>\n", 2);
-                                }
-                                WriteFichier("\t\t</director>\n", 2);
-                            }
-                            WriteFichier("\t</directors>\n", 2);
-                        break;
-                    case 14:
-                            WriteFichier("\t<actors>\n", 2);
-                            Vector<String> actors = new Vector<String>();
-                            actors = Divide("‖", infos.get(champ));
-
-                            ListIterator<String> litr3 = actors.listIterator();
-                            Vector<String> infosa;
-                            String infoa;
-                            while(litr3.hasNext()) {
-                                WriteFichier("\t\t<actor>\n", 2);
-                                infoa = litr3.next().toString();
-                                infosa = new Vector<String>();
-
-                                if(infoa.equals("") == false) {
-                                    infosa = Divide("․", infoa);
-                                    WriteXML("ida", infosa.get(0), 3);
-                                    WriteXML("namea", infosa.get(1), 3);
-                                    WriteXML("charactera", infosa.get(2), 3);
-                                }
-                                else {
-                                    WriteFichier("\t\t\t<ida></ida>\n", 2);
-                                    WriteFichier("\t\t\t<namea></namea>\n", 2);
-                                    WriteFichier("\t\t\t<charactera></charactera>\n", 2);
-                                }
-                                WriteFichier("\t\t</actor>\n", 2);
-                            }
-                            WriteFichier("\t</actors>\n", 2);
-                        break;
+            for(int i = 0; i < infos.size(); i++) {
+                if(i < 12)
+                    WriteXML(names[i], infos.get(i), 1);
+                else {
+                    switch (i) {
+                        case 12:
+                            String[] genres = {"idg", "nameg"};
+                            WriteXMLPlus("genre", infos.get(i), genres);
+                            break;
+                        case 13:
+                            String[] directors = {"idd", "named"};
+                            WriteXMLPlus("director", infos.get(i), directors);
+                            break;
+                        case 14:
+                            String[] actors = {"ida", "namea", "charactera"};
+                            WriteXMLPlus("actor", infos.get(i), actors);
+                            break;
+                    }
                 }
             }
             WriteFichier("</film>\n", 2);
@@ -158,8 +58,7 @@ public class Main {
             bf2.write("</films>");
             bf1.close();
             bf2.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -205,10 +104,8 @@ public class Main {
             try {
                 String line = reader.readLine();
 
-                if(line == null)
-                    break;
-                else
-                    buffer.append(line + "\n");
+                if(line == null) break;
+                buffer.append(line + "\n");
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -249,33 +146,34 @@ public class Main {
         }
     }
 
+    public static void WriteXMLPlus(String balise, String chaine, String[] sousBalise) {
+        WriteFichier("\t<"+ balise +"s>\n", 2);
+
+        ListIterator<String> lContents = Divide("‖", chaine).listIterator();
+        while(lContents.hasNext()) {
+            WriteFichier("\t\t<"+ balise +">\n", 2);
+
+            String infog = lContents.next().toString();
+            if(infog.equals("") == false) {
+                Vector<String> infosg = Divide("․", infog);
+                for(int i = 0; i < sousBalise.length; i++)
+                    WriteXML(sousBalise[i], infosg.get(i), 3);
+            } else
+                for(int i = 0; i < sousBalise.length; i++)
+                    WriteFichier("\t\t\t<"+ sousBalise[i] +"></"+ sousBalise[i] +">\n", 2);
+
+            WriteFichier("\t\t</"+ balise +">\n", 2);
+        }
+        WriteFichier("\t</"+ balise +"s>\n", 2);
+    }
+
     public static Vector<String> Divide(String sep, String chaine) {
         Vector<String> infos = new Vector<String>();
 
         for(int i = 0, j = 0; i != -1; j = i+1) {
             i = chaine.indexOf(sep, j);
             infos.add(i != -1 ? chaine.substring(j, i) : chaine.substring(j));
-            /*
-            if(i != -1)
-                infos.add(chaine.substring(j, i));
-            else
-                infos.add(chaine.substring(j));
-            */
         }
-/*
-        while(true) {
-            i = chaine.indexOf(sep, j);
-            if(i == -1) {
-                info = chaine.substring(j, chaine.length());
-                infos.add(info);
-                break;
-            }
-
-            info = chaine.substring(j, i);
-            j = i + 1;
-            infos.add(info);
-        }
-*/
         return infos;
     }
 }
