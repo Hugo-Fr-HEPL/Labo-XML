@@ -18,37 +18,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        WriteFichier("<!DOCTYPE films SYSTEM \"films.dtd\">\n", 2);
-        WriteFichier("<?xml-stylesheet href =\"./films.xslt\" type=\"text/xsl\" ?>\n", 2);
-        WriteFichier("<films>\n", 2);
-
-        WriteFichier("<!ELEMENT films (film*)>\n", 1);
-        WriteFichier("<!ELEMENT film (id,title,originalTitle,releaseDate,status,voteAverage,voteCount,runtime,certification,posterPath,budget,tagline,genres,directors,actors)>\n", 1);
-        WriteFichier("<!ELEMENT id (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT title (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT originalTitle (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT releaseDate (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT status (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT voteAverage (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT voteCount (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT runtime (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT certification (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT posterPath (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT budget (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT tagline (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT genres ((genre)*)>\n", 1);
-            WriteFichier("<!ELEMENT genre ((idg, nameg)*)>\n", 1);
-            WriteFichier("<!ELEMENT idg (#PCDATA)>\n", 1);
-            WriteFichier("<!ELEMENT nameg (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT directors ((director)*)>\n", 1);
-            WriteFichier("<!ELEMENT director ((idd, named)*)>\n", 1);
-            WriteFichier("<!ELEMENT idd (#PCDATA)>\n", 1);
-            WriteFichier("<!ELEMENT named (#PCDATA)>\n", 1);
-        WriteFichier("<!ELEMENT actors ((actor)*)>\n", 1);
-            WriteFichier("<!ELEMENT actor ((ida, namea, charactera)*)>\n", 1);
-            WriteFichier("<!ELEMENT ida (#PCDATA)>\n", 1);
-            WriteFichier("<!ELEMENT namea (#PCDATA)>\n", 1);
-            WriteFichier("<!ELEMENT charactera (#PCDATA)>\n", 1);
+        WriteDTD();
 
         String films;
         films= readAll(br);
@@ -194,23 +164,54 @@ public class Main {
         }
     }
 
+    public static void WriteDTD() {
+        WriteFichier("<!DOCTYPE films SYSTEM \"films.dtd\">\n", 2);
+        WriteFichier("<?xml-stylesheet href =\"./films.xslt\" type=\"text/xsl\" ?>\n", 2);
+        WriteFichier("<films>\n", 2);
+
+        WriteFichier("<!ELEMENT films (film*)>\n", 1);
+        WriteFichier("<!ELEMENT film (id,title,originalTitle,releaseDate,status,voteAverage,voteCount,runtime,certification,posterPath,budget,tagline,genres,directors,actors)>\n", 1);
+        WriteFichier("<!ELEMENT id (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT title (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT originalTitle (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT releaseDate (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT status (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT voteAverage (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT voteCount (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT runtime (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT certification (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT posterPath (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT budget (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT tagline (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT genres ((genre)*)>\n", 1);
+            WriteFichier("<!ELEMENT genre ((idg, nameg)*)>\n", 1);
+            WriteFichier("<!ELEMENT idg (#PCDATA)>\n", 1);
+            WriteFichier("<!ELEMENT nameg (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT directors ((director)*)>\n", 1);
+            WriteFichier("<!ELEMENT director ((idd, named)*)>\n", 1);
+            WriteFichier("<!ELEMENT idd (#PCDATA)>\n", 1);
+            WriteFichier("<!ELEMENT named (#PCDATA)>\n", 1);
+        WriteFichier("<!ELEMENT actors ((actor)*)>\n", 1);
+            WriteFichier("<!ELEMENT actor ((ida, namea, charactera)*)>\n", 1);
+            WriteFichier("<!ELEMENT ida (#PCDATA)>\n", 1);
+            WriteFichier("<!ELEMENT namea (#PCDATA)>\n", 1);
+            WriteFichier("<!ELEMENT charactera (#PCDATA)>\n", 1);
+    }
+
     public static String readAll(BufferedReader reader) {
         StringBuffer buffer = new StringBuffer();
 
         while (true) {
-            String line;
             try {
-                line = reader.readLine();
+                String line = reader.readLine();
+
+                if(line == null)
+                    break;
+                else
+                    buffer.append(line + "\n");
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
-            }
-
-            if(line == null)
-                break;
-            else {
-                buffer.append(line);
-                buffer.append("\n");
             }
         }
         return buffer.toString();
@@ -250,13 +251,22 @@ public class Main {
 
     public static Vector<String> Divide(String sep, String chaine) {
         Vector<String> infos = new Vector<String>();
-        int i = 0, j = 0;
-        String info;
 
+        for(int i = 0, j = 0; i != -1; j = i+1) {
+            i = chaine.indexOf(sep, j);
+            infos.add(i != -1 ? chaine.substring(j, i) : chaine.substring(j));
+            /*
+            if(i != -1)
+                infos.add(chaine.substring(j, i));
+            else
+                infos.add(chaine.substring(j));
+            */
+        }
+/*
         while(true) {
             i = chaine.indexOf(sep, j);
             if(i == -1) {
-                info=chaine.substring(j, chaine.length());
+                info = chaine.substring(j, chaine.length());
                 infos.add(info);
                 break;
             }
@@ -265,6 +275,7 @@ public class Main {
             j = i + 1;
             infos.add(info);
         }
+*/
         return infos;
     }
 }
