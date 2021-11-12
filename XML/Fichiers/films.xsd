@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ <xs:element name="films">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="film">
+     <xs:complexType>
+      <xs:sequence>
+       <xs:element name="id" type="xs:unsignedByte" />
+       <xs:element name="title" type="xs:string" />
+       <xs:element name="originalTitle" type="xs:string" />
+       <xs:element name="releaseDate" type="xs:date" />
+       <xs:element name="status" type="xs:string" />
+       <xs:element name="voteAverage" type="xs:decimal" />
+       <xs:element name="voteCount" type="xs:unsignedByte" />
+       <xs:element name="runtime" type="xs:unsignedByte" />
+       <xs:element name="certification" />
+       <xs:element name="posterPath" type="xs:string" />
+       <xs:element name="budget" type="xs:unsignedByte" />
+       <xs:element name="tagline" />
+       <xs:element name="genres">
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="genre">
+           <xs:complexType>
+            <xs:sequence>
+             <xs:element name="idg" type="xs:unsignedByte" />
+             <xs:element name="nameg" type="xs:string" />
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element name="directors">
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="director">
+           <xs:complexType>
+            <xs:sequence>
+             <xs:element name="idd" type="xs:unsignedByte" />
+             <xs:element name="named" type="xs:string" />
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element name="actors">
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element name="actor">
+           <xs:complexType>
+            <xs:sequence>
+             <xs:element name="ida" type="xs:unsignedByte" />
+             <xs:element name="namea" type="xs:string" />
+             <xs:element name="charactera" type="xs:string" />
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:complexType>
+    </xs:element>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+</xs:schema>

@@ -5,7 +5,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 
-
 public class SimplestSaxParser {
     public static void main(String[] args) {
         try {
@@ -16,15 +15,12 @@ public class SimplestSaxParser {
 
             SAXParser sp = factory.newSAXParser();
             sp.parse(GetNomFichier("films.xml"), new HandlerSAX());
-
         }
         catch (ParserConfigurationException pce) {
             System.out.println("ParserConfigurationException : " + pce.getMessage());
-        }
-        catch (IOException io) {
+        } catch (IOException io) {
             System.out.println("IOException : " + io.getMessage());
-        }
-        catch (SAXException se){
+        } catch (SAXException se){
             System.out.println("SaxEXception : " + se.getMessage());
         }
     }

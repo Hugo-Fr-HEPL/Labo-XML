@@ -7,67 +7,52 @@ public class Main {
     static BufferedReader br = null;
     static BufferedWriter bf1 = null;
     static BufferedWriter bf2 = null;
+    static BufferedWriter bf3 = null;
+
 
     public static void main(String[] args) {
         try {
+            br = new BufferedReader(new FileReader(GetNomFichier("movies.txt")));
             bf1 = new BufferedWriter(new FileWriter(GetNomFichier("films.dtd")));
             bf2 = new BufferedWriter(new FileWriter(GetNomFichier("films.xml")));
-            br = new BufferedReader(new FileReader(GetNomFichier("movies.txt")));
+            bf3 = new BufferedWriter(new FileWriter(GetNomFichier("films.xsd")));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        String[][] names = {{"id", "unsignedByte"},
+                        {"title", "string"},
+                        {"originalTitle", "string"},
+                        {"releaseDate", "date"},
+                        {"status", "string"},
+                        {"voteAverage", "decimal"},
+                        {"voteCount", "unsignedByte"},
+                        {"runtime", "unsignedByte"},
+                        {"certification", ""},
+                        {"posterPath", "string"},
+                        {"budget", "unsignedByte"},
+                        {"tagline", ""},
+                        {"genre", "", "idg", "unsignedByte", "nameg", "string"},
+                        {"director", "", "idd", "unsignedByte", "named", "string"},
+                        {"actor", "", "ida", "unsignedByte", "namea", "string", "charactera", "string"}};
+
         WriteDTD();
 
-        ListIterator<String> lFilms = Divide("\n", readAll(br)).listIterator();
+        WriteXML(names);
 
-        Vector<String> infos;
-        String film1;
-        while(lFilms.hasNext()) {
-            WriteFichier("<film>\n", 2);
-            film1 = lFilms.next().toString();
-            infos = new Vector<String>();
-            infos = Divide("‣", film1);
-
-            String[] names = {"id", "title", "originalTitle", "releaseDate", "status", "voteAverage", "voteCount", "runtime", "certification", "posterPath", "budget", "tagline"};
-
-            for(int i = 0; i < infos.size(); i++) {
-                if(i < 12)
-                    WriteXML(names[i], infos.get(i), 1);
-                else {
-                    switch (i) {
-                        case 12:
-                            String[] genres = {"idg", "nameg"};
-                            WriteXMLPlus("genre", infos.get(i), genres);
-                            break;
-                        case 13:
-                            String[] directors = {"idd", "named"};
-                            WriteXMLPlus("director", infos.get(i), directors);
-                            break;
-                        case 14:
-                            String[] actors = {"ida", "namea", "charactera"};
-                            WriteXMLPlus("actor", infos.get(i), actors);
-                            break;
-                    }
-                }
-            }
-            WriteFichier("</film>\n", 2);
-        }
+        WriteXSD("film", names);
 
         try {
-            bf2.write("</films>");
             bf1.close();
             bf2.close();
+            bf3.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void WriteDTD() {
-        WriteFichier("<!DOCTYPE films SYSTEM \"films.dtd\">\n", 2);
-        WriteFichier("<?xml-stylesheet href =\"./films.xslt\" type=\"text/xsl\" ?>\n", 2);
-        WriteFichier("<films>\n", 2);
 
+    public static void WriteDTD() {
         WriteFichier("<!ELEMENT films (film*)>\n", 1);
         WriteFichier("<!ELEMENT film (id,title,originalTitle,releaseDate,status,voteAverage,voteCount,runtime,certification,posterPath,budget,tagline,genres,directors,actors)>\n", 1);
         WriteFichier("<!ELEMENT id (#PCDATA)>\n", 1);
@@ -97,6 +82,140 @@ public class Main {
             WriteFichier("<!ELEMENT charactera (#PCDATA)>\n", 1);
     }
 
+
+    public static void WriteXML(String[][] names) {
+        WriteFichier("<!DOCTYPE films SYSTEM \"films.dtd\">\n", 2);
+        WriteFichier("<?xml-stylesheet href =\"./films.xslt\" type=\"text/xsl\" ?>\n", 2);
+        WriteFichier("<films>\n", 2);
+
+        ListIterator<String> lFilms = Divide("\n", readAll(br)).listIterator();
+        while(lFilms.hasNext()) {
+            WriteFichier("<film>\n", 2);
+            Vector<String> infos = Divide("‣", lFilms.next().toString());
+
+            for(int i = 0; i < infos.size(); i++) {
+                if(names[i].length <= 2)
+                    WriteXMLTag(names[i][0], infos.get(i), 1);
+                else
+                    WriteXMLTagPlus(names[i], infos.get(i));
+            }
+            WriteFichier("</film>\n", 2);
+        }
+        WriteFichier("</films>", 2);
+    }
+    public static void WriteXMLTag(String balise, String chaine, int i) {
+        chaine = chaine.replaceAll("&", "&amp;");
+
+        try {
+            for(int j = 0; j < i; j++)
+                bf2.write("\t");
+
+            bf2.write("<" + balise + ">");
+            bf2.write(chaine);
+            bf2.write("</" + balise + ">\n");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void WriteXMLTagPlus(String[] balise, String chaine) {
+        WriteFichier("\t<"+ balise[0] +"s>\n", 2);
+
+        ListIterator<String> lContents = Divide("‖", chaine).listIterator();
+        while(lContents.hasNext()) {
+            WriteFichier("\t\t<"+ balise[0] +">\n", 2);
+
+            String info = lContents.next().toString();
+            if(info.equals("") == false) {
+                Vector<String> infos = Divide("․", info);
+                for(int i = 2, j = 0; i < balise.length; i+=2, j++)
+                    WriteXMLTag(balise[i], infos.get(j), 3);
+            } else
+                for(int i = 1; i < balise.length; i+=2)
+                    WriteFichier("\t\t\t<"+ balise[i] +"></"+ balise[i] +">\n", 2);
+
+            WriteFichier("\t\t</"+ balise[0] +">\n", 2);
+        }
+        WriteFichier("\t</"+ balise[0] +"s>\n", 2);
+    }
+
+
+    public static void WriteXSD(String global, String[][] names) {
+        WriteFichier("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n", 3);
+        WriteFichier("<xs:schema attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n", 3);
+        WriteXSDOpen(nbSpace(1), global + "s");
+        WriteXSDOpen(nbSpace(4), global);
+
+        for(int i = 0; i < names.length; i++) {
+            if(names[i].length <= 2)
+                WriteXSDElem(names[i], 7, 0);
+            else
+                WriteXSDElemPlus(names[i], 7, 0);
+        }
+
+        WriteXSDClose(nbSpace(4));
+        WriteXSDClose(nbSpace(1));
+        WriteFichier("</xs:schema>", 3);
+    }
+    public static void WriteXSDElem(String[] element, int i, int start) {
+        String space = nbSpace(i);
+
+        String elem = space + "<xs:element name=\""+ element[start] +"\"";
+        if(element[start+1].equals("") == false)
+            elem += " type=\"xs:"+ element[start+1] +"\"";
+        elem += " />\n";
+
+        WriteFichier(elem, 3);
+    }
+    public static void WriteXSDElemPlus(String[] element, int i, int start) {
+        WriteXSDOpen(nbSpace(i), element[start] + "s");
+        WriteXSDOpen(nbSpace(i+3), element[start]);
+
+        for(int j = 2; j < element.length; j+=2)
+            WriteXSDElem(element, 13, start+j);
+
+        WriteXSDClose(nbSpace(i+3));
+        WriteXSDClose(nbSpace(i));
+    }
+
+    public static void WriteXSDOpen(String space, String elem) {
+        WriteFichier(space + "<xs:element name=\""+ elem +"\">\n", 3);
+        WriteFichier(space + " <xs:complexType>\n", 3);
+        WriteFichier(space + "  <xs:sequence>\n", 3);
+    }
+    public static void WriteXSDClose(String space) {
+        WriteFichier(space + "  </xs:sequence>\n", 3);
+        WriteFichier(space + " </xs:complexType>\n", 3);
+        WriteFichier(space + "</xs:element>\n", 3);
+    }
+    public static String nbSpace(int i) {
+        String space = "";
+        for(int j = 0; j < i; j++)
+            space += " ";
+        return space;
+    }
+
+
+    public static void WriteFichier(String chaine, int i) {
+        try {
+            switch(i) {
+                case 1:
+                    bf1.write(chaine);
+                break;
+                case 2:
+                    bf2.write(chaine);
+                break;
+                case 3:
+                    bf3.write(chaine);
+                break;
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static String readAll(BufferedReader reader) {
         StringBuffer buffer = new StringBuffer();
 
@@ -114,58 +233,6 @@ public class Main {
         return buffer.toString();
     }
 
-    public static String GetNomFichier(String nomf) {
-        return System.getProperty("user.dir") + System.getProperty("file.separator") + "XML" + System.getProperty("file.separator") + "Fichiers" + System.getProperty("file.separator") + nomf;
-    }
-
-    public static void WriteFichier(String chaine, int i) {
-        try {
-            if(i == 1)
-                bf1.write(chaine);
-            else
-                bf2.write(chaine);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void WriteXML(String balise, String chaine, int i) {
-        chaine = chaine.replaceAll("&", "&amp;");
-
-        try {
-            for(int j = 0; j < i; j++)
-                bf2.write("\t");
-
-            bf2.write("<" + balise + ">");
-            bf2.write(chaine);
-            bf2.write("</" + balise + ">\n");
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void WriteXMLPlus(String balise, String chaine, String[] sousBalise) {
-        WriteFichier("\t<"+ balise +"s>\n", 2);
-
-        ListIterator<String> lContents = Divide("‖", chaine).listIterator();
-        while(lContents.hasNext()) {
-            WriteFichier("\t\t<"+ balise +">\n", 2);
-
-            String infog = lContents.next().toString();
-            if(infog.equals("") == false) {
-                Vector<String> infosg = Divide("․", infog);
-                for(int i = 0; i < sousBalise.length; i++)
-                    WriteXML(sousBalise[i], infosg.get(i), 3);
-            } else
-                for(int i = 0; i < sousBalise.length; i++)
-                    WriteFichier("\t\t\t<"+ sousBalise[i] +"></"+ sousBalise[i] +">\n", 2);
-
-            WriteFichier("\t\t</"+ balise +">\n", 2);
-        }
-        WriteFichier("\t</"+ balise +"s>\n", 2);
-    }
 
     public static Vector<String> Divide(String sep, String chaine) {
         Vector<String> infos = new Vector<String>();
@@ -175,5 +242,9 @@ public class Main {
             infos.add(i != -1 ? chaine.substring(j, i) : chaine.substring(j));
         }
         return infos;
+    }
+
+    public static String GetNomFichier(String nomf) {
+        return System.getProperty("user.dir") + System.getProperty("file.separator") + "XML" + System.getProperty("file.separator") + "Fichiers" + System.getProperty("file.separator") + nomf;
     }
 }
