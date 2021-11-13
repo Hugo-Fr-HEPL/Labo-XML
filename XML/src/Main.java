@@ -162,8 +162,7 @@ public class Main {
         WriteFichier("\t<"+ balise[0] +"s>\n", 2);
         WriteFichier("\t\t<"+ balise[0] +">\n", 2);
 
-        WriteXMLTag(balise[2], "0", 3);
-        for(int i = 4; i < balise.length; i+=2)
+        for(int i = 2; i < balise.length; i+=2)
             WriteXMLTag(balise[i], "", 3);
 
         WriteFichier("\t\t</"+ balise[0] +">\n", 2);
