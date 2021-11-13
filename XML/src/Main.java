@@ -9,6 +9,8 @@ public class Main {
     static BufferedWriter bf2 = null;
     static BufferedWriter bf3 = null;
 
+    static boolean XSD = true;
+
 
     public static void main(String[] args) {
         try {
@@ -20,27 +22,28 @@ public class Main {
             e.printStackTrace();
         }
 
-        String[][] names = {{"id", "unsignedByte"},
+        String[][] names = {{"id", "unsignedShort"},
                         {"title", "string"},
                         {"originalTitle", "string"},
                         {"releaseDate", "date"},
                         {"status", "string"},
                         {"voteAverage", "decimal"},
-                        {"voteCount", "unsignedByte"},
-                        {"runtime", "unsignedByte"},
+                        {"voteCount", "unsignedShort"},
+                        {"runtime", "unsignedShort"},
                         {"certification", ""},
                         {"posterPath", "string"},
-                        {"budget", "unsignedByte"},
+                        {"budget", "unsignedInt"},
                         {"tagline", ""},
-                        {"genre", "", "idg", "unsignedByte", "nameg", "string"},
-                        {"director", "", "idd", "unsignedByte", "named", "string"},
-                        {"actor", "", "ida", "unsignedByte", "namea", "string", "charactera", "string"}};
+                        {"genre", "", "idg", "unsignedInt", "nameg", "string"},
+                        {"director", "", "idd", "unsignedInt", "named", "string"},
+                        {"actor", "", "ida", "unsignedInt", "namea", "string", "charactera", "string"}};
 
         WriteDTD();
 
         WriteXML("movie", names);
 
-        WriteXSD("movie", names);
+        if(XSD)
+            WriteXSD("movie", names);
 
         try {
             bf1.close();
@@ -84,9 +87,13 @@ public class Main {
 
 
     public static void WriteXML(String global, String[][] names) {
-        WriteFichier("<!DOCTYPE "+ global +"s SYSTEM \""+ global +"s.dtd\">\n", 2);
+        WriteFichier("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n", 2);
         WriteFichier("<?xml-stylesheet href =\"./"+ global +"s.xslt\" type=\"text/xsl\" ?>\n", 2);
-        WriteFichier("<"+ global +"s>\n", 2);
+        WriteFichier("<!DOCTYPE "+ global +"s SYSTEM \""+ global +"s.dtd\">\n", 2);
+        if(XSD)
+            WriteFichier("<"+ global +"s xsi:noNamespaceSchemaLocation=\""+ global +"s.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >\n", 2);
+        else
+            WriteFichier("<"+ global +"s>\n", 2);
 
         ListIterator<String> lFilms = Divide("\n", readAll(br)).listIterator();
         while(lFilms.hasNext()) {
@@ -97,8 +104,12 @@ public class Main {
                 for(int i = 0; i < infos.size(); i++) {
                     if(names[i].length <= 2)
                         WriteXMLTag(names[i][0], infos.get(i), 1);
-                    else
-                        WriteXMLTagPlus(names[i], infos.get(i));
+                    else {
+                        if(infos.get(i).equals("") == false)
+                            WriteXMLTagPlus(names[i], infos.get(i));
+                        else
+                            WriteXMLTagPlusEmpty(names[i]);
+                    }
                 }
                 WriteFichier("</"+ global +">\n", 2);
             }
@@ -113,7 +124,14 @@ public class Main {
                 bf2.write("\t");
 
             bf2.write("<" + balise + ">");
-            bf2.write(chaine);
+            if(chaine.equals("") == false)
+                bf2.write(chaine);
+            else {
+                if(balise.equals("releaseDate"))
+                    bf2.write("2000-01-01");
+                else
+                    bf2.write("0");
+            }
             bf2.write("</" + balise + ">\n");
         }
         catch (IOException e) {
@@ -140,13 +158,24 @@ public class Main {
         }
         WriteFichier("\t</"+ balise[0] +"s>\n", 2);
     }
+    public static void WriteXMLTagPlusEmpty(String[] balise) {
+        WriteFichier("\t<"+ balise[0] +"s>\n", 2);
+        WriteFichier("\t\t<"+ balise[0] +">\n", 2);
+
+        WriteXMLTag(balise[2], "0", 3);
+        for(int i = 4; i < balise.length; i+=2)
+            WriteXMLTag(balise[i], "", 3);
+
+        WriteFichier("\t\t</"+ balise[0] +">\n", 2);
+        WriteFichier("\t</"+ balise[0] +"s>\n", 2);
+    }
 
 
     public static void WriteXSD(String global, String[][] names) {
-        WriteFichier("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n", 3);
+        WriteFichier("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", 3);
         WriteFichier("<xs:schema attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n", 3);
-        WriteXSDOpen(nbSpace(1), global + "s");
-        WriteXSDOpen(nbSpace(4), global);
+        WriteXSDOpen(nbSpace(1), global + "s", 0);
+        WriteXSDOpen(nbSpace(4), global, 1);
 
         for(int i = 0; i < names.length; i++) {
             if(names[i].length <= 2)
@@ -170,8 +199,8 @@ public class Main {
         WriteFichier(elem, 3);
     }
     public static void WriteXSDElemPlus(String[] element, int i, int start) {
-        WriteXSDOpen(nbSpace(i), element[start] + "s");
-        WriteXSDOpen(nbSpace(i+3), element[start]);
+        WriteXSDOpen(nbSpace(i), element[start] + "s", 0);
+        WriteXSDOpen(nbSpace(i+3), element[start], 1);
 
         for(int j = 2; j < element.length; j+=2)
             WriteXSDElem(element, 13, start+j);
@@ -180,8 +209,11 @@ public class Main {
         WriteXSDClose(nbSpace(i));
     }
 
-    public static void WriteXSDOpen(String space, String elem) {
-        WriteFichier(space + "<xs:element name=\""+ elem +"\">\n", 3);
+    public static void WriteXSDOpen(String space, String elem, int i) {
+        if(i == 0)
+            WriteFichier(space + "<xs:element name=\""+ elem +"\">\n", 3);
+        else
+            WriteFichier(space + "<xs:element maxOccurs=\"unbounded\" name=\""+ elem +"\">\n", 3);
         WriteFichier(space + " <xs:complexType>\n", 3);
         WriteFichier(space + "  <xs:sequence>\n", 3);
     }
