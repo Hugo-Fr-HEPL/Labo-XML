@@ -8,6 +8,8 @@ import java.util.Vector;
 
 
 public class HandlerSAX extends DefaultHandler {
+    boolean show = false;
+
     int cptTag = 0, cptCertif = 0, j = -1;
     Double note1, note2;
     boolean title = false, vote = false;
@@ -17,9 +19,10 @@ public class HandlerSAX extends DefaultHandler {
     Vector<String> temp, temp1, temp2;
 
     public void characters(char[] ch, int start, int length) throws SAXException {
-        String chaine = new String(ch,start,length).trim();
+        String chaine = new String(ch, start, length).trim();
         if(chaine.length() > 0) {
-            System.out.println("Caractères: " + chaine);
+            if(show)
+                System.out.println("Caractères: " + chaine);
 
             if(chaine.equals("PG-13"))
                 cptCertif++;
@@ -78,14 +81,15 @@ public class HandlerSAX extends DefaultHandler {
     }
 
     public void startElement(java.lang.String uri, java.lang.String localName, java.lang.String qName, Attributes attr) throws SAXException {
-        System.out.println("- Début d'une balise");
+        if(show)
+            System.out.println("- Début d'une balise");
 
         cptTag++;
 
-        if(uri != null && uri.length() > 0)
+        if(uri != null && uri.length() > 0 && show)
             System.out.println("uri: " + uri);
 
-        if(qName != null && qName.length() > 0) {
+        if(qName != null && qName.length() > 0 && show) {
             System.out.println("nom complet: " + qName);
 
             if(qName.equals("title"))
@@ -96,16 +100,19 @@ public class HandlerSAX extends DefaultHandler {
         }
 
         int nAttr = attr.getLength();
-        System.out.println("nombre d'attributs: " + nAttr);
+        if(show)
+            System.out.println("nombre d'attributs: " + nAttr);
         if(nAttr == 0)
             return;
 
-        for(int i = 0; i < nAttr; i++)
-            System.out.println("attribut n°" + i + "->" + attr.getLocalName(i) + "avec valeur: " + attr.getValue(i));
+        if(show)
+            for(int i = 0; i < nAttr; i++)
+                System.out.println("attribut n°" + i + "->" + attr.getLocalName(i) + "avec valeur: " + attr.getValue(i));
     }
 
     public void endElement(java.lang.String uri, java.lang.String localName, java.lang.String qName) throws SAXException {
-        System.out.println("- Fin de la balise");
+        if(show)
+            System.out.println("- Fin de la balise");
 
         cptTag++;
 
