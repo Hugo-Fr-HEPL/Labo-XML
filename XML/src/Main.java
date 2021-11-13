@@ -79,13 +79,13 @@ public class Main {
             WriteFichier("<!ELEMENT actor ((ida, namea, charactera)*)>\n", 1);
             WriteFichier("<!ELEMENT ida (#PCDATA)>\n", 1);
             WriteFichier("<!ELEMENT namea (#PCDATA)>\n", 1);
-            WriteFichier("<!ELEMENT charactera (#PCDATA)>\n", 1);
+            WriteFichier("<!ELEMENT charactera (#PCDATA)>", 1);
     }
 
 
     public static void WriteXML(String global, String[][] names) {
-        WriteFichier("<!DOCTYPE movies SYSTEM \"movies.dtd\">\n", 2);
-        WriteFichier("<?xml-stylesheet href =\"./movies.xslt\" type=\"text/xsl\" ?>\n", 2);
+        WriteFichier("<!DOCTYPE "+ global +"s SYSTEM \""+ global +"s.dtd\">\n", 2);
+        WriteFichier("<?xml-stylesheet href =\"./"+ global +"s.xslt\" type=\"text/xsl\" ?>\n", 2);
         WriteFichier("<"+ global +"s>\n", 2);
 
         ListIterator<String> lFilms = Divide("\n", readAll(br)).listIterator();

@@ -14,15 +14,11 @@ public class SimplestSaxParser {
             factory.setNamespaceAware(true);
 
             SAXParser sp = factory.newSAXParser();
-            sp.parse(GetNomFichier("films.xml"), new HandlerSAX());
+            sp.parse(GetNomFichier("movies.xml"), new HandlerSAX());
         }
-        catch (ParserConfigurationException pce) {
-            System.out.println("ParserConfigurationException : " + pce.getMessage());
-        } catch (IOException io) {
-            System.out.println("IOException : " + io.getMessage());
-        } catch (SAXException se){
-            System.out.println("SaxEXception : " + se.getMessage());
-        }
+        catch (ParserConfigurationException pce) { System.out.println("ParserConfigurationException : " + pce.getMessage()); }
+        catch (IOException io) { System.out.println("IOException : " + io.getMessage()); }
+        catch (SAXException se){ System.out.println("SaxEXception : " + se.getMessage()); }
     }
 
     public static String GetNomFichier(String nomf) {

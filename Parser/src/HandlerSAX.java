@@ -19,7 +19,7 @@ public class HandlerSAX extends DefaultHandler {
     public void characters(char[] ch, int start, int length) throws SAXException {
         String chaine = new String(ch,start,length).trim();
         if(chaine.length() > 0) {
-            System.out.println("Caratères: " + chaine);
+            System.out.println("Caractères: " + chaine);
 
             if(chaine.equals("PG-13"))
                 cptCertif++;
@@ -114,14 +114,14 @@ public class HandlerSAX extends DefaultHandler {
     }
 
 
-    public void warning( SAXParseException e) throws SAXException {
-        System.out.println(("WARNING : "+ e.getMessage ()));
+    public void warning(SAXParseException e) throws SAXException {
+        System.out.println("WARNING : "+ e.getMessage ());
     }
-    public void error( SAXParseException e) throws SAXException {
-        System.out.println(("ERROR : "+ e.getMessage ()));
+    public void error(SAXParseException e) throws SAXException {
+        System.out.println("ERROR : "+ e.getMessage ()); throw e;
     }
-    public void fatalError( SAXParseException e) throws SAXException {
-        System.out.println(("FATAL : "+ e.getMessage ()));
+    public void fatalError(SAXParseException e) throws SAXException {
+        System.out.println("FATAL : "+ e.getMessage ()); throw e;
     }
 }
 
