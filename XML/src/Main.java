@@ -9,7 +9,7 @@ public class Main {
     static BufferedWriter bf2 = null;
     static BufferedWriter bf3 = null;
 
-    static boolean XSD = false;
+    static boolean XSD = true;
 
 
     public static void main(String[] args) {
@@ -146,13 +146,9 @@ public class Main {
             WriteFichier("\t\t<"+ balise[0] +">\n", 2);
 
             String info = lContents.next().toString();
-            if(info.equals("") == false) {
-                Vector<String> infos = Divide("․", info);
-                for(int i = 2, j = 0; i < balise.length; i+=2, j++)
-                    WriteXMLTag(balise[i], infos.get(j), 3);
-            } else
-                for(int i = 1; i < balise.length; i+=2)
-                    WriteFichier("\t\t\t<"+ balise[i] +"></"+ balise[i] +">\n", 2);
+            Vector<String> infos = Divide("․", info);
+            for(int i = 2, j = 0; i < balise.length; i+=2, j++)
+                WriteXMLTag(balise[i], infos.get(j), 3);
 
             WriteFichier("\t\t</"+ balise[0] +">\n", 2);
         }
@@ -202,7 +198,7 @@ public class Main {
         WriteXSDOpen(nbSpace(i+3), element[start], 1);
 
         for(int j = 2; j < element.length; j+=2)
-            WriteXSDElem(element, 13, start+j);
+            WriteXSDElem(element, i+6, start+j);
 
         WriteXSDClose(nbSpace(i+3));
         WriteXSDClose(nbSpace(i));

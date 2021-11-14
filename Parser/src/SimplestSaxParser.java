@@ -7,7 +7,7 @@ import org.xml.sax.SAXException;
 
 
 public class SimplestSaxParser {
-    static boolean XSD = false;
+    static boolean XSD = true;
 
     public static void main(String[] args) {
         try {

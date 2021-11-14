@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xml-stylesheet href ="./movies.xslt" type="text/xsl" ?>
 <!DOCTYPE movies SYSTEM "movies.dtd">
-<movies>
+<movies xsi:noNamespaceSchemaLocation="movies.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 <movie>
 	<id>2</id>
 	<title>Ariel</title>
