@@ -1,2 +1,5 @@
 *.txt
 *.vscode
+*.xml
+*.dtd
+*.xsd

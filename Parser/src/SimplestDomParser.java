@@ -50,7 +50,7 @@ public class SimplestDomParser {
                         classement[k][0] = classement[k+1][0];
                         classement[k][1] = classement[k+1][1];
                     }
-                    classement[j-1][0] = tmp.item(2).getTextContent();
+                    classement[j-1][0] = tmp.item(1).getTextContent();
                     classement[j-1][1] = tmp.item(5).getTextContent();
                 }
             }

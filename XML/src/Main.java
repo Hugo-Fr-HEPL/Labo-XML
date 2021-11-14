@@ -38,12 +38,12 @@ public class Main {
                         {"director", "", "idd", "unsignedInt", "named", "string"},
                         {"actor", "", "ida", "unsignedInt", "namea", "string", "charactera", "string"}};
 
-        WriteDTD();
-
         WriteXML("movie", names);
 
         if(XSD)
             WriteXSD("movie", names);
+        else
+            WriteDTD();
 
         try {
             bf1.close();
