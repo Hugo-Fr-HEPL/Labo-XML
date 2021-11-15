@@ -95,11 +95,13 @@ public class Main {
         else
             WriteFichier("<"+ global +"s>\n", 2);
 
-        ListIterator<String> lFilms = Divide("\n", readAll(br)).listIterator();
-        while(lFilms.hasNext()) {
-            Vector<String> infos = Divide("‣", lFilms.next().toString());
-
-            if(lFilms.hasNext()) {
+        try {
+            while(true) {
+                String line = br.readLine();
+                if(line == null)
+                    break;
+                Vector<String> infos = Divide("‣", line);
+    
                 WriteFichier("<"+ global +">\n", 2);
                 for(int i = 0; i < infos.size(); i++) {
                     if(names[i].length <= 2)
@@ -113,8 +115,9 @@ public class Main {
                 }
                 WriteFichier("</"+ global +">\n", 2);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        WriteFichier("</"+ global +"s>", 2);
     }
     public static void WriteXMLTag(String balise, String chaine, int i) {
         chaine = chaine.replaceAll("&", "&amp;");
