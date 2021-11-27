@@ -20,9 +20,9 @@ CREATE OR REPLACE DIRECTORY MYDIR AS 'C:\';
 CREATE OR REPLACE DIRECTORY MYDIR AS 'D:\Ecole\B3\XML\Labo-XML\SGBD';
 
 
-DROP TABLE ventesTxt;
+DROP TABLE VentesInternal;
 
-CREATE TABLE ventesTxt
+CREATE TABLE VentesInternal
 (
     idVente NUMBER(4),
     
@@ -71,4 +71,14 @@ ORGANIZATION EXTERNAL
 )
 REJECT LIMIT UNLIMITED;
 
-select * from ventesTxt;
+-- Verif
+select * from VentesInternal;
+
+
+
+-- Create internal table from external one
+CREATE TABLE VentesExternal AS SELECT * FROM VentesInternal;
+
+-- Verif
+SELECT * FROM VentesExternal;
+

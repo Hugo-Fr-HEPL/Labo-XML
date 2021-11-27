@@ -2,3 +2,5 @@
 *.xml
 *.dtd
 *.xsd
+*.bad
+*.log
