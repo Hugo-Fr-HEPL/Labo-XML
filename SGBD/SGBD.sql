@@ -1,4 +1,25 @@
+ALTER SESSION set "_ORACLE_SCRIPT" = true;
+
+
+
+CREATE USER hugo IDENTIFIED BY hugo
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP
+PROFILE DEFAULT ACCOUNT UNLOCK;
+ALTER USER hugo QUOTA UNLIMITED ON USERS;
+
+GRANT CONNECT TO hugo;
+GRANT RESOURCE TO hugo;
+GRANT EXECUTE ON SYS.DBMS_LOCK TO hugo;
+GRANT EXECUTE ON SYS.OWA_OPT_LOCK TO hugo;
+GRANT CREATE ANY DIRECTORY TO hugo;
+
+
+
 CREATE OR REPLACE DIRECTORY MYDIR AS 'C:\';
+CREATE OR REPLACE DIRECTORY MYDIR AS 'D:\Ecole\B3\XML\Labo-XML\SGBD';
+
+
 DROP TABLE ventesTxt;
 
 CREATE TABLE ventesTxt
@@ -30,7 +51,8 @@ ORGANIZATION EXTERNAL
         FIELDS TERMINATED BY ';'
         MISSING FIELD VALUES ARE NULL
         (
-            idVente unsigned integer external(4),
+            idVente char(4),
+
             idClient unsigned integer external(4),
             nomClient char(30),
             prenomClient char(30),
@@ -38,10 +60,10 @@ ORGANIZATION EXTERNAL
             
             idMagasin unsigned integer external(4),
             nomMagasin char(30),
-            codePostal unsigned integer,
+            codePostal char(4),
 
             article char(50),
-            dateAchat char(10) date_format date mask "dd-mm-yyyy",
+            dateAchat char(10) date_format date mask "dd/mm/yy",
             URLTicket char(50)
         )
     )
