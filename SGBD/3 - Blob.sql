@@ -1,8 +1,8 @@
 -- Blob
--- GRANT SUR LES ACL (� faire en SYS sur le m�me conteneur)
+-- GRANT SUR LES ACL (A faire en SYS sur le meme conteneur)
 BEGIN
 	DBMS_NETWORK_ACL_ADMIN.CREATE_ACL (
-		acl => 'aclLabo4.xml', 
+		acl => 'aclBlob', 
 		description => 'Acces a internet pour les images', 
 		principal => 'HUGO',
 		is_grant => true,
@@ -10,30 +10,53 @@ BEGIN
 	);
 
 	DBMS_NETWORK_ACL_ADMIN.ASSIGN_ACL(
-		acl => 'aclLabo4.xml',
-		host => 'image.tmdb.org');
+		acl => 'aclBlob',
+		host => 'image.noelshack.com');
 END;
-	
+/
+
 -- Pour supprimer l'ACL
 BEGIN
 	DBMS_NETWORK_ACL_ADMIN.DROP_ACL (
-		acl => 'aclLabo4.xml'
+		acl => 'aclBlob'
 	);
 END;
+/
 
--- Dans TestGest
+-- Dans hugo
 create table blobtest
 (
 	id NUMBER(5) PRIMARY KEY,
 	img blob
 );
+DROP TABLE blobtest;
 
+Set SERVEROUTPUT ON;
 DECLARE
+    TYPE nt_Ticket   IS TABLE OF VARCHAR (50);
+    ticket     nt_Ticket;
+
 	image blob;
-	url varchar2(200) := 'http://image.noelshack.com/';
+	url VARCHAR(200);
 BEGIN
-	url := concat (url ,'/sav0jxhqiH0bPr2vZFU0Kjt2nZL.jpg');
-	image := httpuritype.createuri(url).getblob();
-	insert into blobtest values (10,image);
+    SELECT URLTicket BULK COLLECT INTO ticket FROM VentesInternal;
+
+	FOR i IN 1..ticket.COUNT LOOP
+		url := concat ('http://image.noelshack.com/', ticket(i));
+		image := httpuritype.createuri(url).getblob();
+		insert into blobtest values (i, image);
+	END LOOP;
+	--DBMS_OUTPUT.PUT_LINE(url);
 COMMIT;
 END;
+/
+-- To view the blob
+
+-- Open data window of your table.
+-- The BLOB cell will be named as (BLOB).
+-- Double click the cell.
+-- You will see a pencil icon. Click on it.
+-- It will open a blob editor window.
+-- You would find two check boxes against the option View as : Image or Text.
+-- Select the appropriate check box.
+-- If above step is still not convincing, then use the Download option.
