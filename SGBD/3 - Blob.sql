@@ -23,15 +23,17 @@ BEGIN
 END;
 /
 
+
+
+
 -- Dans hugo
-create table blobtest
-(
+DROP TABLE blobtest;
+CREATE TABLE blobtest (
 	id NUMBER(5) PRIMARY KEY,
 	img blob
 );
-DROP TABLE blobtest;
 
-Set SERVEROUTPUT ON;
+-- SET SERVEROUTPUT ON;
 DECLARE
     TYPE nt_Ticket   IS TABLE OF VARCHAR (50);
     ticket     nt_Ticket;
@@ -39,7 +41,7 @@ DECLARE
 	image blob;
 	url VARCHAR(200);
 BEGIN
-    SELECT URLTicket BULK COLLECT INTO ticket FROM VentesInternal;
+    SELECT URLTicket BULK COLLECT INTO ticket FROM Ventes;
 
 	FOR i IN 1..ticket.COUNT LOOP
 		url := concat ('http://image.noelshack.com/', ticket(i));

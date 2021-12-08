@@ -1,23 +1,33 @@
 -- Create internal table from external one
-DROP TABLE VentesInternal;
+DROP TABLE Clients;
+DROP TABLE Magasins;
+DROP TABLE Articles;
+DROP TABLE Ventes;
+DROP TABLE Achats;
 
-CREATE TABLE VentesInternal AS
-SELECT
-    idVente,
+
+-- Clients
+CREATE TABLE Clients AS
+SELECT DISTINCT
     idClient,
     nomClient,
     prenomClient,
-    mailClient,
+    mailClient
+FROM VentesExternal;
+SELECT * FROM Clients;
+
+
+-- Magasins
+CREATE TABLE Magasins AS
+SELECT DISTINCT
     idMagasin,
     nomMagasin,
-    codePostal,
-    dateAchat,
-    URLTicket
+    codePostal
 FROM VentesExternal;
-SELECT * FROM VentesInternal;
+SELECT * FROM Magasins;
 
 
-
+-- Articles
 DROP TABLE ArticlesTmp;
 CREATE TABLE ArticlesTmp (
     numArticle NUMBER(4),
@@ -51,47 +61,69 @@ END;
 /
 DROP TABLE Articles;
 CREATE TABLE Articles AS
-SELECT DISTINCT * FROM ArticlesTmp WHERE numArticle IS NOT NULL;
-
-SELECT * FROM Articles;
+SELECT DISTINCT * FROM ArticlesTmp
+WHERE numArticle IS NOT NULL;
 DROP TABLE ArticlesTmp;
 
+SELECT * FROM Articles;
 
 
-DROP TABLE AchatsTmp;
-CREATE TABLE AchatsTmp (
-    idCLient    NUMBER(4),
+-- Ventes
+DROP TABLE VentesTmp;
+CREATE TABLE VentesTmp (
+    idVente     NUMBER(4),
+    idClient    NUMBER(4),
+    idMagasin   NUMBER(4),
     numArticle  NUMBER(4),
-    quantite    NUMBER(4)
+    quantite    NUMBER(4),
+    dateAchat   DATE,
+    URLTicket   VARCHAR(50)
 );
 
 DECLARE
-    TYPE nt_Article   IS TABLE OF VARCHAR (50);
+    TYPE nt_Vente     IS TABLE OF INTEGER (4);
     TYPE nt_Client    IS TABLE OF INTEGER (4);
-    arti     nt_Article;
+    TYPE nt_Magasin    IS TABLE OF INTEGER (4);
+    TYPE nt_Article   IS TABLE OF VARCHAR (50);
+    TYPE nt_Date      IS TABLE OF DATE;
+    TYPE nt_URL       IS TABLE OF VARCHAR (50);
+    
+    ven      nt_Vente;
     cli      nt_Client;
+    mag      nt_Magasin;
+    arti     nt_Article;
+    dat      nt_Date;
+    url      nt_URL;
 BEGIN
-    SELECT article, idClient BULK COLLECT INTO arti, cli FROM VentesExternal;
+    SELECT idVente, idClient, idMagasin, article, dateAchat, URLTicket
+    BULK COLLECT INTO ven, cli, mag, arti, dat, url
+    FROM VentesExternal;
     
     FOR i IN 1..arti.COUNT LOOP
         FOR j IN 1..2 LOOP
-            INSERT INTO AchatsTmp
+            INSERT INTO VentesTmp
             VALUES (
+                ven(i),
                 cli(i),
+                mag(i),
                 CAST(REGEXP_SUBSTR(
                     REGEXP_SUBSTR(arti(i), '(.*)&|(.*)$', 1, j, NULL),
                     '[^.&]*', 1, 1, NULL)AS INTEGER),
                 CAST(REGEXP_SUBSTR(
                     REGEXP_SUBSTR(arti(i), '(.*)&|(.*)$', 1, j, NULL),
-                    '[^.&]*', 1, 7, NULL)AS INTEGER)
+                    '[^.&]*', 1, 7, NULL)AS INTEGER),
+                dat(i),
+                url(i)
             );
         END LOOP;
     END LOOP;
 END;
 /
-DROP TABLE Achats;
-CREATE TABLE Achats AS
-SELECT * FROM AchatsTmp WHERE numArticle IS NOT NULL;
+DROP TABLE Ventes;
+CREATE TABLE Ventes AS
+SELECT *
+FROM VentesTmp
+WHERE numArticle IS NOT NULL;
+DROP TABLE VentesTmp;
 
-SELECT * FROM Achats;
-DROP TABLE AchatsTmp;
+SELECT * FROM Ventes;
