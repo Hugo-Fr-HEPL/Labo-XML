@@ -21,7 +21,7 @@ SELECT * FROM Magasins@local_link;
 -- Créations de Ventes
 DROP TABLE Ventes;
 CREATE TABLE Ventes AS
-SELECT * FROM Ventes@local_link INNER JOIN Magasins USING(idMagasin);
+SELECT idVente, idClient, idMagasin, numArticle, quantite, dateAchat, URLTicket FROM Ventes@local_link INNER JOIN Magasins USING(idMagasin);
 
 SELECT * FROM Ventes;
 
