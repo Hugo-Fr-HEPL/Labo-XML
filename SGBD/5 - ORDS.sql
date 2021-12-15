@@ -68,59 +68,50 @@ END;
 
 -- POST
 CREATE OR REPLACE PROCEDURE POSTmagasin(magasinId INT, newCode INT) AS
-
-    ven     ventes.idVente%TYPE;
-    dat     ventes.dateAchat%TYPE;
-    cli     clients.prenomclient%TYPE;
-    mag     magasins.nommagasin%TYPE;
-    
-    TYPE nt_Art IS RECORD (
-        nom         articles.nomarticle%TYPE,
-        quantite    ventes.quantite%TYPE,
-        prix        articles.prix%TYPE
-    );
-    TYPE nt_ArtList IS TABLE OF nt_Art INDEX BY BINARY_INTEGER;
-    art     nt_ArtList;
-
 BEGIN
 -- Check code postal to move in the right table
     INSERT INTO magasins@local_link
-    SELECT * FROM magasins
-    WHERE idMagasin = magasinId
-    AND codePostal < 5000;
+    SELECT  * FROM magasins
+    WHERE   idMagasin = magasinId
+    AND     codePostal < 5000;
     
     INSERT INTO magasins
-    SELECT * FROM magasins@local_link
-    WHERE idMagasin = magasinId
-    AND codePostal >= 5000;
+    SELECT  * FROM magasins@local_link
+    WHERE   idMagasin = magasinId
+    AND     codePostal >= 5000;
 
 
 -- Change code postal
     UPDATE  magasins
     SET     codePostal = newCode
-    WHERE   idMagasin = magasinId;
+    WHERE   idMagasin = magasinId; 
     
     UPDATE  magasins@local_link
     SET     codePostal = newCode
     WHERE   idMagasin = magasinId;
 
 
+-- Change ventes
+    INSERT INTO ventes@local_link
+    SELECT * FROM ventes
+    WHERE idMagasin IN (SELECT idMagasin FROM Magasins@local_link);
+
+    INSERT INTO ventes
+    SELECT * FROM ventes@local_link
+    WHERE idMagasin IN (SELECT idMagasin FROM Magasins);
+
+
 -- Remove changed row
     DELETE FROM magasins WHERE codePostal >= 5000;
     DELETE FROM magasins@local_link WHERE codePostal < 5000;
+
+    DELETE FROM ventes WHERE idMagasin NOT IN (SELECT idMagasin FROM Magasins);
+    DELETE FROM ventes@local_link WHERE idMagasin NOT IN (SELECT idMagasin FROM Magasins@local_link);
 END;
 /
 
-
-DELETE FROM magasins WHERE idMagasin = 4;
-DELETE FROM magasins@local_link WHERE idMagasin = 4;
-INSERT INTO magasins VALUES(4, 'Delhaize', 4000);
-INSERT INTO magasins VALUES(1, 'Aldi', 1000);
-
-
-
 BEGIN
-    POSTmagasin(4, 6000);
+    POSTmagasin(4, 6500);
 END;
 /
 BEGIN
