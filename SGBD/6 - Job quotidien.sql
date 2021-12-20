@@ -26,6 +26,8 @@ select * FROM ventes@local_link;
 select * FROM ventes@local_link2;
 
 
+
+
 -- Premier job
 BEGIN
   dbms_scheduler.create_job(
@@ -33,12 +35,12 @@ BEGIN
       job_type => 'PLSQL_BLOCK',
       job_action => 
         'BEGIN insert into log values(
-            (SELECT COALESCE(MAX(idLog) + 1, 1) FROM log),
-            (SELECT SYSDATE FROM DUAL),
-            ((SELECT COUNT(*) FROM ventes@local_link) + (SELECT COUNT(*) FROM ventes@local_link2));
+          (SELECT COALESCE(MAX(idLog) + 1, 1) FROM log),
+          (SELECT SYSDATE FROM DUAL),
+          ((SELECT COUNT(*) FROM ventes@local_link) + (SELECT COUNT(*) FROM ventes@local_link2)));
         commit;  END;',
       start_date => NULL,
-      repeat_interval => 'FREQ=DAILY; BYHOUR=3; BYMINUTE=00',
+      repeat_interval => 'FREQ=DAILY; BYHOUR=9; BYMINUTE=03',
       auto_drop => FALSE,
       comments => 'First test',
       enabled => true
